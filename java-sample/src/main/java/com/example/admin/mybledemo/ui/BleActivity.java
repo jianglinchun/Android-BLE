@@ -30,8 +30,21 @@ import android.widget.TextView;
 import com.example.admin.mybledemo.BleRssiDevice;
 import com.example.admin.mybledemo.R;
 import com.example.admin.mybledemo.adapter.ScanAdapter;
+import com.google.gson.Gson;
 import com.nexenio.bleindoorpositioning.location.distance.BeaconDistanceCalculator;
 import com.pgyersdk.update.PgyUpdateManager;
+
+import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.DisconnectedBufferOptions;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +79,10 @@ public class BleActivity extends AppCompatActivity {
     private Ble<BleRssiDevice> ble = Ble.getInstance();
     private ObjectAnimator animator;
 
+    String clientId = "AndroidBLERSSIClient";
+    private MqttAndroidClient mqttAndroidClient;
+    final String serverUri = "tcp://iot.dcideal.com:1883";
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,8 +93,76 @@ public class BleActivity extends AppCompatActivity {
         initBleStatus();
         requestPermission();
 
+        initMQTTClient();
+    }
+
+    private void initMQTTClient() {
+        clientId = clientId + System.currentTimeMillis();
+        mqttAndroidClient = new MqttAndroidClient(getApplicationContext(), serverUri, clientId);
+
+        mqttAndroidClient.setCallback(new MqttCallbackExtended() {
+            @Override
+            public void connectComplete(boolean reconnect, String serverURI) {
+
+                if (reconnect) {
+//                    addToHistory("Reconnected to : " + serverURI);
+//                    // Because Clean Session is true, we need to re-subscribe
+//                    subscribeToTopic();
+                } else {
+//                    addToHistory("Connected to: " + serverURI);
+                }
+            }
+
+            @Override
+            public void connectionLost(Throwable cause) {
+//                addToHistory("The Connection was lost.");
+            }
+
+            @Override
+            public void messageArrived(String topic, MqttMessage message) throws Exception {
+//                addToHistory("Incoming message: " + new String(message.getPayload()));
+            }
+
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken token) {
+
+            }
+        });
+
+        MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
+        mqttConnectOptions.setAutomaticReconnect(true);
+        mqttConnectOptions.setCleanSession(true);
 
 
+
+
+
+
+
+        try {
+            //addToHistory("Connecting to " + serverUri);
+            mqttAndroidClient.connect(mqttConnectOptions, null, new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    DisconnectedBufferOptions disconnectedBufferOptions = new DisconnectedBufferOptions();
+                    disconnectedBufferOptions.setBufferEnabled(true);
+                    disconnectedBufferOptions.setBufferSize(100);
+                    disconnectedBufferOptions.setPersistBuffer(false);
+                    disconnectedBufferOptions.setDeleteOldestMessages(false);
+                    mqttAndroidClient.setBufferOpts(disconnectedBufferOptions);
+//                    subscribeToTopic();
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+//                    addToHistory("Failed to connect to: " + serverUri);
+                }
+            });
+
+
+        } catch (MqttException ex){
+            ex.printStackTrace();
+        }
     }
 
     @Permission(value = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
@@ -244,6 +329,17 @@ public class BleActivity extends AppCompatActivity {
                 device.setRssi(rssi);
                 device.setDistance(BeaconDistanceCalculator.calculateDistance(rssi, -67, 2.f));
                 bleRssiDevices.add(device);
+
+                try {
+                    Gson gs = new Gson();
+                    MqttMessage message = new MqttMessage();
+                    String payload = gs.toJson(bleRssiDevices);
+                    message.setPayload(payload.getBytes());
+                    mqttAndroidClient.publish("BLE/RSSI", message);
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+
                 adapter.notifyDataSetChanged();
             }
         }

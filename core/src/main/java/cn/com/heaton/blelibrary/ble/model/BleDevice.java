@@ -4,6 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.RestrictTo;
 
+import java.io.Serializable;
+
 import cn.com.heaton.blelibrary.ble.Ble;
 
 /**

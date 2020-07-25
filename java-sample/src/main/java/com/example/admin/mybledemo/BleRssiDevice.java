@@ -1,10 +1,12 @@
 package com.example.admin.mybledemo;
 
+import java.io.Serializable;
+
 import cn.com.heaton.blelibrary.ble.model.BleDevice;
 import cn.com.heaton.blelibrary.ble.model.ScanRecord;
 
-public class BleRssiDevice extends BleDevice{
-    private ScanRecord scanRecord;
+public class BleRssiDevice extends BleDevice {
+//    private ScanRecord scanRecord;
     private int rssi;
     private long rssiUpdateTime;
     private double distance;
@@ -19,13 +21,13 @@ public class BleRssiDevice extends BleDevice{
         this.rssi = rssi;
     }*/
 
-    public ScanRecord getScanRecord() {
-        return scanRecord;
-    }
-
-    public void setScanRecord(ScanRecord scanRecord) {
-        this.scanRecord = scanRecord;
-    }
+//    public ScanRecord getScanRecord() {
+//        return scanRecord;
+//    }
+//
+//    public void setScanRecord(ScanRecord scanRecord) {
+//        this.scanRecord = scanRecord;
+//    }
 
     public int getRssi() {
         return rssi;
