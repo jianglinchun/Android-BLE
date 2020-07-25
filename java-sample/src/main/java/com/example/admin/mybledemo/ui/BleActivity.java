@@ -320,6 +320,7 @@ public class BleActivity extends AppCompatActivity {
                             rssiDevice.setRssiUpdateTime(System.currentTimeMillis());
                             rssiDevice.setRssi(rssi);
                             rssiDevice.setDistance(BeaconDistanceCalculator.calculateDistance(rssi, -67, 2.f));
+                            pushNotify(device);
                             adapter.notifyItemChanged(i);
                         }
                         return;
@@ -329,18 +330,21 @@ public class BleActivity extends AppCompatActivity {
                 device.setRssi(rssi);
                 device.setDistance(BeaconDistanceCalculator.calculateDistance(rssi, -67, 2.f));
                 bleRssiDevices.add(device);
-
-                try {
-                    Gson gs = new Gson();
-                    MqttMessage message = new MqttMessage();
-                    String payload = gs.toJson(bleRssiDevices);
-                    message.setPayload(payload.getBytes());
-                    mqttAndroidClient.publish("BLE/RSSI", message);
-                }catch (Exception e) {
-                    e.printStackTrace();
-                }
+                pushNotify(device);
 
                 adapter.notifyDataSetChanged();
+            }
+        }
+
+        private void pushNotify(final BleRssiDevice device) {
+            try {
+                Gson gs = new Gson();
+                MqttMessage message = new MqttMessage();
+                String payload = gs.toJson(device);
+                message.setPayload(payload.getBytes());
+                mqttAndroidClient.publish("BLE/RSSI", message);
+            }catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
