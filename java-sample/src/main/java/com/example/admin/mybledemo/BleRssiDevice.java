@@ -7,6 +7,7 @@ public class BleRssiDevice extends BleDevice{
     private ScanRecord scanRecord;
     private int rssi;
     private long rssiUpdateTime;
+    private double distance;
 
     public BleRssiDevice(String address, String name) {
         super(address, name);
@@ -40,5 +41,13 @@ public class BleRssiDevice extends BleDevice{
 
     public void setRssiUpdateTime(long rssiUpdateTime) {
         this.rssiUpdateTime = rssiUpdateTime;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
     }
 }

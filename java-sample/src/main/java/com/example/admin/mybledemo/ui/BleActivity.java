@@ -30,6 +30,7 @@ import android.widget.TextView;
 import com.example.admin.mybledemo.BleRssiDevice;
 import com.example.admin.mybledemo.R;
 import com.example.admin.mybledemo.adapter.ScanAdapter;
+import com.nexenio.bleindoorpositioning.location.distance.BeaconDistanceCalculator;
 import com.pgyersdk.update.PgyUpdateManager;
 
 import java.util.ArrayList;
@@ -233,6 +234,7 @@ public class BleActivity extends AppCompatActivity {
                         if (rssiDevice.getRssi() != rssi && System.currentTimeMillis()-rssiDevice.getRssiUpdateTime() >1000L){
                             rssiDevice.setRssiUpdateTime(System.currentTimeMillis());
                             rssiDevice.setRssi(rssi);
+                            rssiDevice.setDistance(BeaconDistanceCalculator.calculateDistance(rssi, -67, 2.f));
                             adapter.notifyItemChanged(i);
                         }
                         return;
@@ -240,6 +242,7 @@ public class BleActivity extends AppCompatActivity {
                 }
                 device.setScanRecord(ScanRecord.parseFromBytes(scanRecord));
                 device.setRssi(rssi);
+                device.setDistance(BeaconDistanceCalculator.calculateDistance(rssi, -67, 2.f));
                 bleRssiDevices.add(device);
                 adapter.notifyDataSetChanged();
             }

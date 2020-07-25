@@ -46,7 +46,7 @@ public class ScanAdapter extends RecyclerAdapter<BleRssiDevice> {
 
 
 //        BleDevice device = rssiDevice.getDevice();
-        rssi.setText(String.format("%ddBm", device.getRssi()));
+        rssi.setText(String.format("%ddBm / %f", device.getRssi(), device.getDistance()));
         if (TextUtils.isEmpty(device.getBleName())){
             name.setText("未知设备");
         }else {
