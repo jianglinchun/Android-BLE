@@ -82,6 +82,8 @@ public class BleActivity extends AppCompatActivity {
     private List<BleRssiDevice> bleRssiDevices;
     private Ble<BleRssiDevice> ble = Ble.getInstance();
     private ObjectAnimator animator;
+    private AndSubView numAngel;
+    private AndSubView numDistance;
 
     String clientId = "AndroidBLERSSIClient";
     private MqttAndroidClient mqttAndroidClient;
@@ -176,12 +178,6 @@ public class BleActivity extends AppCompatActivity {
         mqttConnectOptions.setAutomaticReconnect(true);
         mqttConnectOptions.setCleanSession(true);
 
-
-
-
-
-
-
         try {
             //addToHistory("Connecting to " + serverUri);
             mqttAndroidClient.connect(mqttConnectOptions, null, new IMqttActionListener() {
@@ -236,6 +232,8 @@ public class BleActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         floatingActionButton = findViewById(R.id.floatingButton);
         filterView = findViewById(R.id.filterView);
+        numAngel = findViewById(R.id.numAngel);
+        numDistance = findViewById(R.id.numDistance);
         filterView.init(this);
     }
 
@@ -380,7 +378,7 @@ public class BleActivity extends AppCompatActivity {
         }
 
         private void pushNotify(final BleRssiDevice device) {
-            // TODO 获取本机机型以及唯一标识
+            // 本机机型以及唯一标识
             HashMap phone = new HashMap();
             phone.put("MANUFACTURER", Build.MANUFACTURER);
             phone.put("BRAND", Build.BRAND);
@@ -388,12 +386,19 @@ public class BleActivity extends AppCompatActivity {
             phone.put("MODEL", Build.MODEL);
             phone.put("ID", _phoneId);
             phone.put("ANDROID_OS_RELEASE", Build.VERSION.RELEASE);
+
+            // 标定的角度和位置
+            HashMap calibrate_param = new HashMap();
+            calibrate_param.put("angel", numAngel.getValue());
+            calibrate_param.put("distance", numDistance.getValue());
+
             try {
                 Gson gs = new Gson();
                 MqttMessage message = new MqttMessage();
                 HashMap payload = new HashMap();
                 payload.put("ble", device);
                 payload.put("phone", phone);
+                payload.put("calibrate", calibrate_param);
                 message.setPayload(gs.toJson(payload).getBytes());
                 mqttAndroidClient.publish("BLE/RSSI", message);
             }catch (Exception e) {

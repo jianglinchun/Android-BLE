@@ -1,0 +1,17 @@
+<resources>
+    <declare-styleable name="AndSubView">
+        <attr name="textColor" format="color"/>
+        <attr name="initValue" format="integer"/>
+        <attr name="maxValue" format="integer"/>
+        <attr name="minValue" format="integer"/>
+        <attr name="textSize" format="dimension"/>
+        <attr name="textFrameBackground" format="reference|color"/>
+        <attr name="addBackground" format="reference|color"/>
+        <attr name="subBackground" format="reference|color"/>
+        <attr name="textFrameWidth" format="dimension"/>
+        <attr name="addWidth" format="dimension"/>
+        <attr name="subWidth" format="dimension"/>
+        <attr name="addText" format="string"/>
+        <attr name="subText" format="string"/>
+    </declare-styleable>
+</resources>
