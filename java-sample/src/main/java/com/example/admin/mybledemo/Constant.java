@@ -20,6 +20,7 @@ public class Constant {
     @Retention(RetentionPolicy.SOURCE)
     public @interface Constance {
         String OTA_FILE_PATH = "new_ota.bin";//ota文件路径
+        String SP_DEVICES_ID = "_BLE_DEVICE_ID";
     }
 
     @Retention(RetentionPolicy.SOURCE)

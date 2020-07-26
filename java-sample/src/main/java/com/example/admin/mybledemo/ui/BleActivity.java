@@ -28,12 +28,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.admin.mybledemo.BleRssiDevice;
+import com.example.admin.mybledemo.Constant;
 import com.example.admin.mybledemo.R;
 import com.example.admin.mybledemo.adapter.ScanAdapter;
 import com.google.gson.Gson;
 import com.nexenio.bleindoorpositioning.location.distance.BeaconDistanceCalculator;
 import com.pgyersdk.update.PgyUpdateManager;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.DisconnectedBufferOptions;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -46,7 +48,9 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONArray;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import cn.com.heaton.blelibrary.ble.Ble;
@@ -82,6 +86,7 @@ public class BleActivity extends AppCompatActivity {
     String clientId = "AndroidBLERSSIClient";
     private MqttAndroidClient mqttAndroidClient;
     final String serverUri = "tcp://iot.dcideal.com:1883";
+    String _phoneId = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -94,6 +99,44 @@ public class BleActivity extends AppCompatActivity {
         requestPermission();
 
         initMQTTClient();
+
+        genDeviceId();
+    }
+
+    private void genDeviceId() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    //获取保存在sd中的 设备唯一标识符
+                    String readDeviceID = com.example.admin.mybledemo.Utils.GetDeviceId.readDeviceID(BleActivity.this);
+                    //获取缓存在  sharepreference 里面的 设备唯一标识
+                    String string = com.example.admin.mybledemo.Utils.SPUtils.get(BleActivity.this, Constant.Constance.SP_DEVICES_ID, readDeviceID);
+//                    String string = com.example.admin.mybledemo.Utils.
+                    //判断 app 内部是否已经缓存,  若已经缓存则使用app 缓存的 设备id
+                    if (string != null) {
+                        //app 缓存的和SD卡中保存的不相同 以app 保存的为准, 同时更新SD卡中保存的 唯一标识符
+                        if (StringUtils.isBlank(readDeviceID) && !string.equals(readDeviceID)) {
+                            // 取有效地 app缓存 进行更新操作
+                            if (StringUtils.isBlank(readDeviceID) && !StringUtils.isBlank(string)) {
+                                readDeviceID = string;
+                                com.example.admin.mybledemo.Utils.GetDeviceId.saveDeviceID(readDeviceID, BleActivity.this);
+                            }
+                        }
+                    }
+                    // app 没有缓存 (这种情况只会发生在第一次启动的时候)
+                    if (StringUtils.isBlank(readDeviceID)) {
+                        //保存设备id
+                        readDeviceID = com.example.admin.mybledemo.Utils.GetDeviceId.getDeviceId(BleActivity.this);
+                    }
+                    //左后再次更新app 的缓存
+                    com.example.admin.mybledemo.Utils.SPUtils.put(BleActivity.this, Constant.Constance.SP_DEVICES_ID, readDeviceID);
+                    _phoneId = readDeviceID;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     private void initMQTTClient() {
@@ -337,11 +380,21 @@ public class BleActivity extends AppCompatActivity {
         }
 
         private void pushNotify(final BleRssiDevice device) {
+            // TODO 获取本机机型以及唯一标识
+            HashMap phone = new HashMap();
+            phone.put("MANUFACTURER", Build.MANUFACTURER);
+            phone.put("BRAND", Build.BRAND);
+            phone.put("DEVICE", Build.DEVICE);
+            phone.put("MODEL", Build.MODEL);
+            phone.put("ID", _phoneId);
+            phone.put("ANDROID_OS_RELEASE", Build.VERSION.RELEASE);
             try {
                 Gson gs = new Gson();
                 MqttMessage message = new MqttMessage();
-                String payload = gs.toJson(device);
-                message.setPayload(payload.getBytes());
+                HashMap payload = new HashMap();
+                payload.put("ble", device);
+                payload.put("phone", phone);
+                message.setPayload(gs.toJson(payload).getBytes());
                 mqttAndroidClient.publish("BLE/RSSI", message);
             }catch (Exception e) {
                 e.printStackTrace();

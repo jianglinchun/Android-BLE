@@ -63,6 +63,7 @@ dependencies {
     implementation 'org.altbeacon:android-beacon-library:2+'
     implementation 'com.nexenio.bleindoorpositioning:core:0.4.0'
     implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
+    implementation 'org.apache.commons:commons-lang3:3.5'
     implementation ('org.eclipse.paho:org.eclipse.paho.android.service:1.1.1') {
         transitive(false)
     }
