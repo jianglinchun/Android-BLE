@@ -56,34 +56,48 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal">
+        android:layout_marginBottom="5dp"
+        android:orientation="vertical">
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="10dp"
-            android:layout_weight="1"
-            android:text="X坐标(米)" />
+            android:orientation="horizontal">
 
-        <com.example.admin.mybledemo.ui.AndSubView
-            android:id="@+id/numCalibrateX"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:text="X坐标(米)" />
+
+            <com.example.admin.mybledemo.ui.AndSubView
+                android:id="@+id/numCalibrateX"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
 
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="10dp"
-            android:layout_weight="1"
-            android:text="Y坐标(米)" />
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
 
-        <com.example.admin.mybledemo.ui.AndSubView
-            android:id="@+id/numCalibrateY"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:text="Y坐标(米)" />
+
+            <com.example.admin.mybledemo.ui.AndSubView
+                android:id="@+id/numCalibrateY"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
 
 
     </LinearLayout>
