@@ -605,7 +605,7 @@ public final class Ble<T extends BleDevice> {
         /**
          * 蓝牙扫描周期时长
          */
-        public long scanPeriod = 10 * 1000L;
+        public long scanPeriod = 15 * 1000L;
         /**
          * 服务绑定失败重试次数
          */

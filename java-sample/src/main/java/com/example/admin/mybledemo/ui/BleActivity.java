@@ -40,15 +40,12 @@ import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.DisconnectedBufferOptions;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.json.JSONArray;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -82,8 +79,8 @@ public class BleActivity extends AppCompatActivity {
     private List<BleRssiDevice> bleRssiDevices;
     private Ble<BleRssiDevice> ble = Ble.getInstance();
     private ObjectAnimator animator;
-    private AndSubView numAngel;
-    private AndSubView numDistance;
+    private AndSubView numCalibrateX;
+    private AndSubView numCalibrateY;
 
     String clientId = "AndroidBLERSSIClient";
     private MqttAndroidClient mqttAndroidClient;
@@ -232,8 +229,8 @@ public class BleActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         floatingActionButton = findViewById(R.id.floatingButton);
         filterView = findViewById(R.id.filterView);
-        numAngel = findViewById(R.id.numAngel);
-        numDistance = findViewById(R.id.numDistance);
+        numCalibrateX = findViewById(R.id.numCalibrateX);
+        numCalibrateY = findViewById(R.id.numCalibrateY);
         filterView.init(this);
     }
 
@@ -389,8 +386,8 @@ public class BleActivity extends AppCompatActivity {
 
             // 标定的角度和位置
             HashMap calibrate_param = new HashMap();
-            calibrate_param.put("angel", numAngel.getValue());
-            calibrate_param.put("distance", numDistance.getValue());
+            calibrate_param.put("calibrate_x", numCalibrateX.getValue());
+            calibrate_param.put("calibrate_y", numCalibrateY.getValue());
 
             try {
                 Gson gs = new Gson();

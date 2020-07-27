@@ -58,29 +58,34 @@
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:text="X坐标(米)" />
+
         <com.example.admin.mybledemo.ui.AndSubView
-            android:id="@+id/numAngel"
+            android:id="@+id/numCalibrateX"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="10dp"
             android:layout_weight="1"
-            android:text="度" />
+            android:text="Y坐标(米)" />
 
         <com.example.admin.mybledemo.ui.AndSubView
-            android:id="@+id/numDistance"
+            android:id="@+id/numCalibrateY"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_weight="1"
-            android:text="米" />
+
     </LinearLayout>
 
 
